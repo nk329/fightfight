@@ -1,12 +1,14 @@
 # === Frontend 관련 ===
-/frontend/node_modules
+/frontend/node_modules  
 /frontend/build
 /frontend/.env*
 *.log
 
 # === Backend 관련 ===
-**/__pycache__/
-/*.pyc
+venv/
+backend/venv/
+__pycache__/
+*.pyc
 
 # === OS ===
 .DS_Store
