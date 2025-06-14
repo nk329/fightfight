@@ -5,8 +5,6 @@
 *.log
 
 # === Backend 관련 ===
-/backend/app/static
-/backend/app/uploads
 **/__pycache__/
 /*.pyc
 

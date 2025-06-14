@@ -5,6 +5,7 @@ function UploadForm() {
   const [imageA, setImageA] = useState(null);
   const [imageB, setImageB] = useState(null);
   const [result, setResult] = useState(null);
+  const [showSimulation, setShowSimulation] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,6 +21,7 @@ function UploadForm() {
     try {
       const res = await axios.post("http://localhost:8000/api/upload", formData);
       setResult(res.data);
+      setShowSimulation(false);
     } catch (error) {
       console.error("업로드 실패:", error);
       alert("업로드 중 오류가 발생했습니다.");
@@ -27,20 +29,47 @@ function UploadForm() {
   };
 
   return (
-    <div>
-      <h2>🏋️ 승패 예측 이미지 업로드</h2>
-      <form onSubmit={handleSubmit}>
-        <input type="file" accept="image/*" onChange={(e) => setImageA(e.target.files[0])} />
-        <input type="file" accept="image/*" onChange={(e) => setImageB(e.target.files[0])} />
-        <button type="submit">업로드</button>
+    <div style={{ maxWidth: "960px", margin: "0 auto", fontFamily: "sans-serif", padding: "20px" }}>
+      <h2 style={{ textAlign: "center", fontSize: "28px", marginBottom: "20px" }}>🏆 승패 예측 시스템</h2>
+
+      <form onSubmit={handleSubmit} style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
+        <div>
+          <label>Player A 이미지</label><br />
+          <input type="file" accept="image/*" onChange={(e) => setImageA(e.target.files[0])} />
+        </div>
+        <div>
+          <label>Player B 이미지</label><br />
+          <input type="file" accept="image/*" onChange={(e) => setImageB(e.target.files[0])} />
+        </div>
+        <div style={{ alignSelf: "end" }}>
+          <button type="submit">업로드</button>
+        </div>
       </form>
 
       {result && (
         <div>
-          <h3>🎯 예측 결과</h3>
-         <img src={`http://localhost:8000${result.faceA}?t=${Date.now()}`} alt="Face A" width="100" />
-         <img src={`http://localhost:8000${result.faceB}?t=${Date.now()}`} alt="Face B" width="100" />
-          <p>승리 확률 (A 기준): {result.probability * 100}%</p>
+          <h3>📊 예측 결과</h3>
+          <div style={{ display: "flex", alignItems: "center", gap: "20px", marginBottom: "10px" }}>
+            <img src={`http://localhost:8000/uploads/playerA.jpg?t=${Date.now()}`} alt="Player A" width="120" />
+            <img src={`http://localhost:8000/uploads/playerB.jpg?t=${Date.now()}`} alt="Player B" width="120" />
+            <p style={{ fontSize: "18px", fontWeight: "bold" }}>
+              승리 확률 (A 기준): {(result.probability * 100).toFixed(2)}%
+            </p>
+          </div>
+          <button onClick={() => setShowSimulation(true)}>🕹️ 시뮬레이션 실행</button>
+        </div>
+      )}
+
+      {showSimulation && (
+        <div style={{ marginTop: "30px", border: "1px solid #ccc", borderRadius: "8px", padding: "10px" }}>
+          <h3>🧠 Unity 시뮬레이션</h3>
+          <iframe
+            src="http://localhost:8000/unity/index.html"
+            width="960"
+            height="600"
+            style={{ border: "none", width: "100%" }}
+            title="Unity Simulation"
+          />
         </div>
       )}
     </div>
