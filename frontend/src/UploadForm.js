@@ -48,7 +48,7 @@ function UploadForm() {
 
       {result && (
         <div>
-          <h3>📊 예측 결과</h3>
+          <h3>예측 결과</h3>
           <div style={{ display: "flex", alignItems: "center", gap: "20px", marginBottom: "10px" }}>
             <img src={`http://localhost:8000/uploads/playerA.jpg?t=${Date.now()}`} alt="Player A" width="120" />
             <img src={`http://localhost:8000/uploads/playerB.jpg?t=${Date.now()}`} alt="Player B" width="120" />
@@ -56,13 +56,13 @@ function UploadForm() {
               승리 확률 (A 기준): {(result.probability * 100).toFixed(2)}%
             </p>
           </div>
-          <button onClick={() => setShowSimulation(true)}>🕹️ 시뮬레이션 실행</button>
+          <button onClick={() => setShowSimulation(true)}>시뮬레이션 실행</button>
         </div>
       )}
 
       {showSimulation && (
         <div style={{ marginTop: "30px", border: "1px solid #ccc", borderRadius: "8px", padding: "10px" }}>
-          <h3>🧠 Unity 시뮬레이션</h3>
+          <h3> Unity 시뮬레이션</h3>
           <iframe
             src="http://localhost:8000/unity/index.html"
             width="960"
