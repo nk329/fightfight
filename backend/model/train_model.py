@@ -1,18 +1,34 @@
 import pandas as pd
 import torch
 import torch.nn as nn
+import numpy as np
 import os
 
-# 데이터 로드
-df = pd.read_csv("backend/model/fight_data.csv")
+# 현재 스크립트 기준으로 경로 설정
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+csv_path = os.path.join(BASE_DIR, "fight_data.csv")
+model_path = os.path.join(BASE_DIR, "model.pt")
 
-X = df[["height_diff", "weight_diff", "reach_diff"]].values
-y = df[["winner"]].values
+# 데이터 로드 및 대칭 데이터 생성
+df = pd.read_csv(csv_path)
 
-X = torch.tensor(X, dtype=torch.float32)
-y = torch.tensor(y, dtype=torch.float32)
+# 원본: A - B, 결과는 A 기준 승리 확률
+X_orig = df[["height_diff", "weight_diff", "reach_diff"]].values
+y_orig = df[["winner"]].values
 
-# 모델 정의
+# 대칭: B - A, 결과는 1 - winner
+X_flip = -X_orig
+y_flip = 1 - y_orig
+
+# 데이터 합치기
+X_total = np.vstack([X_orig, X_flip])
+y_total = np.vstack([y_orig, y_flip])
+
+# 텐서 변환
+X = torch.tensor(X_total, dtype=torch.float32)
+y = torch.tensor(y_total, dtype=torch.float32)
+
+# MLP 모델 정의
 class MLP(nn.Module):
     def __init__(self):
         super().__init__()
@@ -45,6 +61,5 @@ for epoch in range(1000):
         print(f"Epoch {epoch}: loss = {loss.item():.4f}")
 
 # 모델 저장
-os.makedirs("backend/model", exist_ok=True)
-torch.save(model.state_dict(), "backend/model/model.pt")
-print(" model.pt 저장 완료")
+torch.save(model.state_dict(), model_path)
+print(f"모델 저장 완료: {model_path}")

@@ -21,7 +21,7 @@ def crop_face(image_path, output_path):
     faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5)
 
     if len(faces) == 0:
-        print(f"❌ 얼굴 감지 실패: {image_path}")  # 로그 추가
+        print(f" 얼굴 감지 실패: {image_path}")  # 로그 추가
         raise ValueError("얼굴을 찾을 수 없습니다.")
 
     x, y, w, h = faces[0]
