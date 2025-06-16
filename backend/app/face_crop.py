@@ -2,7 +2,7 @@ import cv2
 import os
 
 def crop_face(image_path, output_path):
-    # ✅ 절대경로로 모델 파일 위치 계산
+    # 절대경로로 모델 파일 위치 계산
     base_dir = os.path.dirname(os.path.abspath(__file__))
     cascade_path = os.path.join(base_dir, "models", "haarcascade_frontalface_default.xml")
 
@@ -21,7 +21,7 @@ def crop_face(image_path, output_path):
     faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5)
 
     if len(faces) == 0:
-        print(f"❌ 얼굴 감지 실패: {image_path}")  # ✅ 로그 추가
+        print(f"❌ 얼굴 감지 실패: {image_path}")  # 로그 추가
         raise ValueError("얼굴을 찾을 수 없습니다.")
 
     x, y, w, h = faces[0]
@@ -29,4 +29,4 @@ def crop_face(image_path, output_path):
 
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     cv2.imwrite(output_path, face_img)
-    print(f"✅ 얼굴 이미지 저장 완료: {output_path}")
+    print(f"얼굴 이미지 저장 완료: {output_path}")

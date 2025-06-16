@@ -47,4 +47,4 @@ for epoch in range(1000):
 # 모델 저장
 os.makedirs("backend/model", exist_ok=True)
 torch.save(model.state_dict(), "backend/model/model.pt")
-print("✅ model.pt 저장 완료")
+print(" model.pt 저장 완료")

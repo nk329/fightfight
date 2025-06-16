@@ -14,7 +14,7 @@ def get_pose_landmarker():
         opt = vision.PoseLandmarkerOptions(base_options=bo, output_segmentation_masks=True)
         return vision.PoseLandmarker.create_from_options(opt)
     except Exception as e:
-        print("🔥 MediaPipe 모델 초기화 실패:", e)
+        print("MediaPipe 모델 초기화 실패:", e)
         raise
 
 # 두 이미지로부터 포즈 차이 계산
@@ -69,7 +69,7 @@ def GetInfo(file):
 
     return Height_Weight_Reach
 
-# 🧪 테스트용 실행 코드
+# 테스트용 실행 코드
 if __name__ == "__main__":
     print("모델 경로:", MODEL_PATH)
     print("파일 존재 여부:", os.path.exists(MODEL_PATH))
@@ -86,4 +86,4 @@ if __name__ == "__main__":
         print("몸통 면적 차이:", weight_diff)
         print("리치 차이:", reach_diff)
     except Exception as e:
-        print("❌ 테스트 중 오류:", e)
+        print("테스트 중 오류:", e)

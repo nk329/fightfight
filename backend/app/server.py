@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 import shutil, os
+import json 
 from predictor import load_model, predict_winner
 from face_crop import crop_face
 from mediapipe_utils import predictor_mediapipe
@@ -57,7 +58,7 @@ async def upload_images(imageA: UploadFile = File(...), imageB: UploadFile = Fil
         crop_face(pathA, os.path.join(STATIC_DIR, "faceA.png"))
         crop_face(pathB, os.path.join(STATIC_DIR, "faceB.png"))
     except Exception as e:
-        print("❌ 얼굴 자르기 실패:", str(e))
+        print(" 얼굴 자르기 실패:", str(e))
         raise HTTPException(status_code=400, detail=f"얼굴 자르기 실패: {str(e)}")
 
     # data = predictor_mediapipe(pathA, pathB)  #미디어 파이프 연결
@@ -65,18 +66,31 @@ async def upload_images(imageA: UploadFile = File(...), imageB: UploadFile = Fil
 
     try:
         data = predictor_mediapipe(pathA, pathB)  # 미디어 파이프로 신체 정보 추출
-        print("📏 키 차이:", data[0])
-        print("⚖️  몸통 면적 차이:", data[1])
-        print("🤜 리치 차이:", data[2])
+        print("키 차이:", data[0])
+        print("몸통 면적 차이:", data[1])
+        print("리치 차이:", data[2])
     except Exception as e:
-        print("❌ 포즈 분석 실패:", str(e))
+        print("포즈 분석 실패:", str(e))
         raise HTTPException(status_code=400, detail=f"포즈 분석 실패: {str(e)}")
 
     prob = predict_winner(model, height_diff=data[0], weight_diff=data[1], reach_diff=data[2])
-    print("🧠 예측된 승률 (A 기준):", round(prob, 4))
+    print("예측된 승률 (A 기준):", round(prob, 4))
+
+    with open(os.path.join(STATIC_DIR, "result.json"), "w") as f:
+         json.dump({"probability": round(prob, 4)}, f)
 
     return JSONResponse({
         "faceA": "/static/faceA.png",
         "faceB": "/static/faceB.png",
         "probability": round(prob, 4)
     })
+
+@app.get("/api/result")
+async def get_probability_result():
+    try:
+        result_path = os.path.join(STATIC_DIR, "result.json")
+        with open(result_path, "r") as f:
+            data = json.load(f)
+        return JSONResponse(content=data)
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="결과 파일을 찾을 수 없습니다.")
